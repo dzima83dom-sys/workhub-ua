@@ -1,14 +1,14 @@
-// api/webhook.js — Telegram bot на Vercel (webhook)
+// Telegram webhook на Vercel (Node.js 18, CommonJS)
 const { Telegraf, Markup } = require('telegraf');
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
 const CHANNEL = process.env.PUBLIC_CHANNEL;
 
-// простой тест
+// тестовая команда
 bot.start((ctx) =>
   ctx.reply(
     'Бот готов. Натисни кнопку — перевіримо пост у канал.',
-    Markup.inlineKeyboard([[Markup.button.callback('📣 Тест поста в канал','testpost')]])
+    Markup.inlineKeyboard([[Markup.button.callback('📣 Тест поста в канал', 'testpost')]])
   )
 );
 
@@ -23,8 +23,9 @@ bot.action('testpost', async (ctx) => {
   }
 });
 
-// Экспорт обработчика для Vercel
+// Сам обработчик Vercel (GET вернёт OK, POST обрабатываем апдейти)
 module.exports = async (req, res) => {
+  if (req.method === 'GET') return res.status(200).send('OK');
   try {
     await bot.handleUpdate(req.body);
   } catch (e) {
@@ -32,3 +33,4 @@ module.exports = async (req, res) => {
   }
   res.status(200).send('OK');
 };
+
