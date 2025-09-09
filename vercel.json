@@ -9,3 +9,4 @@
     { "src": "/api/ping",    "dest": "/api/ping.js" }
   ]
 }
+
